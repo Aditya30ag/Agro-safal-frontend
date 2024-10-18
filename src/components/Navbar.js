@@ -335,6 +335,7 @@ export default function Navbar(props) {
       </div>
     )}
     </div>
+    {location.pathname === "/"&&
     <div className="weather-info" style={{height:"250px",width:"450px",position:"absolute",left:"50px",top:"400px",overflow:"scroll",scrollbarWidth:"none",zIndex:"20"}}>
       <h1>Latest News</h1>
       <div className="news-container">
@@ -356,7 +357,7 @@ export default function Navbar(props) {
           ))
         )}
       </div>
-    </div>
+    </div>}
     </>
   );
 }
