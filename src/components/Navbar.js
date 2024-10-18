@@ -1,5 +1,7 @@
 import React,{useState,useEffect} from "react";
 import { Link,useNavigate,useLocation } from "react-router-dom";
+import axios from 'axios';
+import "../index.css";
 
 export default function Navbar(props) {
   let location = useLocation();
@@ -40,7 +42,47 @@ export default function Navbar(props) {
     props.handleonClick2();
   };
 
+  const [showWeather, setShowWeather] = useState(false);
+  const [weatherData, setWeatherData] = useState(null);
+
+  const toggleWeather = () => {
+    setShowWeather(!showWeather);
+  };
+
+  useEffect(() => {
+    if (showWeather && !weatherData) {
+      // Fetch weather data when the bell icon is clicked and data is not already loaded
+      axios
+        .get(`http://api.openweathermap.org/data/2.5/weather?q=New%20Delhi&appid=190dfc4fed3386777429b9d4bc2ed376`)
+        .then(response => {setWeatherData(response.data);console.log(response.data)})
+        .catch(error => console.error("Error fetching weather data:", error));
+    }
+  }, [showWeather, weatherData]);
+
+  const NEWS_URL = `https://newsapi.org/v2/top-headlines?country=us&apiKey=32e909c5e6b2414eb8c978b33e6051ba`;
+
+
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Fetch news data when the component mounts
+    axios
+      .get(NEWS_URL)
+      .then((response) => {
+        setNews(response.data.articles);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError("Error fetching news.",error);
+        setLoading(false);
+      });
+  }, []);
+
+
   return (
+    <>
     <nav className="navbar navbar-light navbar-expand-lg my-1 linear" style={{position:"fixed",top:"-5px",width:"100%",background: "linear-gradient(180deg,#e6ffe6,transparent)",zIndex:"90",fontSize:"20px"}}>
       <div className="container-fluid mx-4">
         <button
@@ -192,7 +234,7 @@ export default function Navbar(props) {
                 className={
                   location.pathname === "/market" ? "nav-link active" : "nav-link"
                 }
-                to="/about"
+                to="/market"
                 onClick={a}
                 style={{ fontWeight: "500" }}
               >
@@ -278,8 +320,43 @@ export default function Navbar(props) {
               </Link>
             </div>
           )}
+          <div className="bell-icon" onClick={toggleWeather}><i class="fa-regular fa-bell"></i></div>
         </div>
       </div>
     </nav>
+    <div style={{position:"absolute",right:"5px",top:"50px",zIndex:"20"}}>
+    {showWeather && weatherData && (
+      <div className="weather-info">
+        <h3 style={{marginBottom:"20px"}}>Weather Information</h3>
+        <p>Location: {weatherData.name}</p>
+        <p>Temperature: {weatherData.main.temp} K</p>
+        <p>Weather: <i className="fa-solid fa-cloud" style={{marginRight:"5px"}}></i>{weatherData.weather[0].description}</p>
+        <p>Wind: At Deg {weatherData.wind.deg} , At speed {weatherData.wind.speed}km/s</p>
+      </div>
+    )}
+    </div>
+    <div className="weather-info" style={{height:"250px",width:"450px",position:"absolute",left:"50px",top:"400px",overflow:"scroll",scrollbarWidth:"none",zIndex:"20"}}>
+      <h1>Latest News</h1>
+      <div className="news-container">
+        {loading ? (
+          <p>Loading news...</p>
+        ) : error ? (
+          <p>{error}</p>
+        ) : (
+          news.map((article, index) => (
+            <div key={index} className="news-card">
+              <div className="news-content">
+                <h5>{article.title}</h5>
+                <p>{article.description}</p>
+                <a href={article.url} target="_blank" rel="noopener noreferrer">
+                  Read more
+                </a>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+    </>
   );
 }

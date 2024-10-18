@@ -134,3 +134,20 @@ code {
     flex: 1 1 100%;
   }
 }/* Styling for the container */
+.bell-icon {
+  cursor: pointer;
+  color: #333;
+  transition: color 0.3s;
+}
+
+.bell-icon:hover {
+  color: #007BFF;
+}
+
+.weather-info {
+  background: #f1f1f1;
+  padding: 20px;
+  margin-top: 20px;
+  display: inline-block;
+  border-radius: 10px;
+}
