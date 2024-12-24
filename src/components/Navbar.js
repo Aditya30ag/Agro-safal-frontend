@@ -59,26 +59,7 @@ export default function Navbar(props) {
     }
   }, [showWeather, weatherData]);
 
-  const NEWS_URL = `https://newsapi.org/v2/top-headlines?country=us&apiKey=32e909c5e6b2414eb8c978b33e6051ba`;
-
-
-  const [news, setNews] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    // Fetch news data when the component mounts
-    axios
-      .get(NEWS_URL)
-      .then((response) => {
-        setNews(response.data.articles);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError("Error fetching news.",error);
-        setLoading(false);
-      });
-  }, []);
+  
 
 
   return (
@@ -335,29 +316,6 @@ export default function Navbar(props) {
       </div>
     )}
     </div>
-    {location.pathname === "/"&&
-    <div className="weather-info" style={{height:"250px",width:"450px",position:"absolute",left:"50px",top:"400px",overflow:"scroll",scrollbarWidth:"none",zIndex:"20"}}>
-      <h1>Latest News</h1>
-      <div className="news-container">
-        {loading ? (
-          <p>Loading news...</p>
-        ) : error ? (
-          <p>{error}</p>
-        ) : (
-          news.map((article, index) => (
-            <div key={index} className="news-card">
-              <div className="news-content">
-                <h5>{article.title}</h5>
-                <p>{article.description}</p>
-                <a href={article.url} target="_blank" rel="noopener noreferrer">
-                  Read more
-                </a>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-    </div>}
     </>
   );
 }
